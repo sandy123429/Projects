@@ -1,0 +1,17 @@
+ID,1
+type,breast
+After adjuvant treatment,T
+Information source of T is pathlogy,F
+Enter size of invasive tumour,1
+Extension to chest wall (not including only pectoralis muscle,T
+"Ulceration/ipsilateral satellite nodules/oedema (incl. peau d""orange) of skin",F
+Inflammatory carcinoma,T
+Information source of N is pathlogy,T
+Micrometastases only: none>2.0mm (but: >0.2mm or more than 200 cells),F
+Number of positive axillary nodes (at least one deposit > 2.0mm),2
+Metastases in internal mammary nodes with metastases in sentinel lymphnode(not clinically detected),T
+Metastases in clinically detected internal mammary nodes,T
+Metastases in infraclavicular nodes,F
+Metastases in supraclavicular nodes,F
+Information source of M is pathlogy,F
+Distant meastases,1

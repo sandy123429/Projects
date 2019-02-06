@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>CanStaging-log</title>
+        <% include ./partials/head %>
+    </head>
+	<body>
+		<% include ./partials/header %>
+
+		<div class="container">
+			<h3> <%=__("Log")%> </h3>
+			<br><br>
+			<table class="table table-hover table-responsive">
+				<thead>
+					<tr>
+                        <% if (user=="admin@admin") {%>
+							<th><%=__("Owner")%></th>	
+						<% } %>
+						<th>ID</th>
+						<th><%=__("Date created")%></th>
+                        <th><%=__("Site")%></th>
+						<th>TNM-Result</th>
+						<th>SG-Result</th>
+						<th>SimpG</th>
+						<th>SG Range</th>
+                        <th>Duke</th>
+                        <% if (user=="admin@admin") {%>
+							<th><%=__("Delete")%></th>	
+							<th><%=__("Edit")%></th>	
+						<% } %>
+					</tr>
+				</thead>
+				<tbody>
+                    <% for (var i = 0; i < log_data.length; i++) { %>                    
+                        <% if (user=="admin@admin") {%>
+                            <form class="form-horizontal" method="POST" enctype="application/json" action="http://nodejs-tnmproj.rhcloud.com/manage_rec?name=<%=user %>">
+	                        	<tr scope="row">
+									<td><input size="12" readonly style="background-color:transparent; border:0px" name="owner" value=<%= log_data[i].owner %>></td>
+									<td><input readonly style="background-color:transparent; border:0px" name="ID" size="4" value=<%= log_data[i].ID %>></td>
+									<td><%= log_data[i].time %></td>
+									<td><input size="10" name="Site" value=<%= log_data[i].Site %>></td>
+									<td><input size="14" name="TNM" value=<%= log_data[i].TNM %>></td>
+									<td><input size="10" name="SG" value=<%= log_data[i].SG %>></td>
+									<td><input size="18" name="SimpG" value=<%= log_data[i].SimpG %>></td>
+									<td><input size="12" name="SGRange" value=<%= log_data[i].SGRange %>></td>
+									<td><input size="10" name="Duke" value=<%= log_data[i].Duke %>></td>
+									<td><input size="16" type="checkbox" name="del" value="T"></td>
+		                        	<td><button type="submit" class="btn btn-default">Ok</button></td>
+		                        <tr>
+		                    </form>
+						<% } else{ %>
+                            <tr scope="row">
+                                <td><%= log_data[i].ID %></td>
+                                <td><%= log_data[i].time %></td>
+                                <td><%= __(log_data[i].Site) %></td>
+                                <td><%= log_data[i].TNM %></td>
+                                <td><%= log_data[i].SG %></td>
+                                <td><%= __(log_data[i].SimpG) %></td>
+                                <td><%= log_data[i].SGRange %></td>
+                                <td><%= log_data[i].Duke %></td>
+                            </tr>    
+                        <% } %>                       
+					<% } %>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>
+

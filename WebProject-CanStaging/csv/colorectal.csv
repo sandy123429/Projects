@@ -1,0 +1,10 @@
+ID,-
+type,colorectal
+After adjuvant treatment,T
+Information source of T is pathlogy,F
+Level of invasion,0
+Information source of N is pathlogy,T
+Number of positive nodes,3
+Tumour deposit in subserosa / mesentery / non-peritonealized pericolic or perirectal tissues,T
+Information source of M is pathlogy,F
+Distant metastases,2

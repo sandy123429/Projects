@@ -1,0 +1,27 @@
+{
+  "name": "WebProject",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.1",
+    "bootbox": "^4.4.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.2.0",
+    "ejs": "^2.5.1",
+    "express": "~4.13.4",
+    "express-session": "^1.14.0",
+    "i18n": "^0.8.3",
+    "i18n-nodejs": "^2.0.0",
+    "jade": "~1.11.0",
+    "moment": "^2.14.1",
+    "morgan": "~1.7.0",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "serve-favicon": "~2.3.0",
+    "sweetalert": "^1.1.3"
+  }
+}

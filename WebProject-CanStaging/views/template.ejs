@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>CanStaging-template</title>
+        <% include ./partials/head %>
+	</head>
+    <style>
+    @media (max-width: 767px) { 
+        .nav-tabs > li {
+            float:none;
+            border:1px solid #dddddd;
+        }
+        .nav-tabs > li.active > a{
+            border:none;
+        }
+        .nav > li > a:hover, .nav > li > a:focus,
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus
+         {
+            background:none;
+            border:none;
+        }
+    }
+    </style>
+	<body>
+		<% include ./partials/header %>
+
+		<div class="container">
+			<ul class="nav nav-tabs">
+				<li role="presentation"><a href="/main?name=<%=user %>"><%=__(labelList[0])%></a></li>
+				<% for (var i=1;i<6;i++){ %>
+					<% if (i==mode) {%>
+						<li role="presentation" class="active"><a href="#"><%=__(labelList[i])%></a></li>
+					<% } else { %>
+						<li role="presentation"><a href=<%= labela[i]%>><%=__(labelList[i])%></a></li>
+					<% } %>
+				<% } %>
+			</ul>
+			<br>
+			<% for (var i=0;i<q.length;i++){ %>
+				
+				<form class="form-horizontal">
+					<div class="form-group">
+						<label for=<%= ansq[i]%> class="col-xs-12 col-sm-6 control-label; text-left">
+					    	<%= __(q[i])%>
+						</label>
+						<% if (am[i]>0){%>
+							<div class="col-xs-1 col-sm-offset-2 col-sm-4 ">
+								<div class = "input-group form">
+									<select name=<%= ansq[i]%> style="width:250px">
+										<% for (var j=0;j<am[i];j++){ %>
+											<option value=<%= j%> ><%= __(qf[i][j])%></option>
+										<% } %>
+									</select>
+								</div>
+							</div>
+						<% } else {%>
+							<div class="col-xs-2 col-sm-offset-2 col-sm-2">
+								<label class="radio-inline">
+									<input type="radio" name=<%= ansq[i]%> value="T"><%=__("Yes")%></input>
+								</label>
+							</div>
+							<div class="col-xs-2 col-sm-2">
+								<label class="radio-inline active">
+									<input type="radio" name=<%= ansq[i]%> value="F" checked><%=__("No")%></input>
+								</label>
+							</div>
+						<% } %>
+					</div>
+				</form>
+			<% } %>
+
+
+			<form class="form-horizontal" id="senddata" method="POST" enctype="application/json" action="http://nodejs-tnmproj.rhcloud.com/store?name=<%=user %>">
+				<div class="form-group">
+					<label class="col-xs-12 col-sm-6 control-label; text-left">
+						ID
+					</label>
+					<div class="col-xs-2 col-sm-offset-2 col-sm-1">
+						<label>
+							<input name="ID" data-toggle="tooltip" title="Optional"></input>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-6 col-sm-6 control-label; text-left">
+						SG
+					</label>
+					<div class="col-xs-offset-1 col-xs-1 col-sm-offset-2 col-sm-1">
+						<label>
+							<input style="background-color:transparent; border:0px"readonly name="SG"></input>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-6 col-sm-6 control-label; text-left">
+						Dukes
+					</label>
+					<div class="col-xs-offset-1 col-xs-1 col-sm-offset-2 col-sm-1">
+						<label>
+							<input data-toggle="tooltip" title="only for colorectal" style="background-color:transparent; border:0px"readonly name='Duke'></input>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-6 col-sm-6 control-label; text-left">
+						SimpG
+					</label>
+					<div class="col-xs-offset-1 col-xs-1 col-sm-offset-2 col-sm-1">
+						<label>
+							<input style="background-color:transparent; border:0px"readonly name="SimpG"></input>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-6 col-sm-6 control-label; text-left">
+						SG range
+					</label>
+					<div class="col-xs-offset-1 col-xs-1 col-sm-offset-2 col-sm-1">
+						<label>
+							<input style="background-color:transparent; border:0px"readonly name="SGrange"></input>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-xs-6 col-sm-6 control-label; text-left">
+						TNM
+					</label>
+					<div class="col-xs-offset-1 col-xs-1 col-sm-offset-2 col-sm-1">
+						<label>
+							<input style="background-color:transparent; border:0px"readonly name="TNM"></input>
+						</label>
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="col-sm-offset-10 col-sm-2">
+						<input hidden name="Site" value="<%= mode%>"></input>
+                        <input hidden name="datac" value="0"></input>
+						<button type="submit" id="send" class="btn btn-default"><%=__("Send")%></button>
+						<br><br><br><br><br><br>
+					</div>
+				</div>
+			</form>
+		</div>
+
+        <script>
+			$(document).ready(function(){
+			    $('[data-toggle="tooltip"]').tooltip(); 
+			});
+		</script>
+        
+        
+		<!--<input hidden name='tt' value=<%= tt%>>-->
+        
+		<% for (var i=0;i<tt.length;i++){%>
+			<input hidden name='tt' value=<%= tt[i]%>>
+            
+		<% }%>		
+		<% for (var i=0;i<nn.length;i++){%>			
+			<input hidden name='nn' value=<%= nn[i]%>>
+		<% }%>		
+		<% for (var i=0;i<mm.length;i++){%>		
+			<input hidden name='mm' value=<%= mm[i]%>>
+		<% }%>
+		<% for (var i=0;i<ssg.length;i++){%>
+			<input hidden name='ssg' value=<%= ssg[i]%>>
+		<% }%>
+		<% for (var i=0;i<ssimg.length;i++){%>
+			<input hidden name='ssimg' value=<%= ssimg[i]%>>
+		<% }%>
+		<% for (var i=0;i<am.length;i++){%>
+			<input hidden name='am' value=<%= am[i]%>>
+		<% }%>			
+
+
+		<script>
+            var result_str='';
+                
+            jQuery( document ).ready(function( $ ) {
+                $(function() {
+                    $('#senddata').submit(function() {
+                        event.preventDefault();
+                        result_str = result_str.concat('<p>').concat('ID: ').concat(document.getElementsByName('ID')[0].value).concat('</p>'); 
+                        result_str = result_str.concat('<p>').concat('TNM Result: ').concat(document.getElementsByName('TNM')[0].value).concat('</p>');
+                        result_str = result_str.concat('<p>').concat('SG: ').concat(document.getElementsByName('SG')[0].value).concat('</p>');
+                        result_str = result_str.concat('<p>').concat('SGrange: ').concat(document.getElementsByName('SGrange')[0].value).concat('</p>');
+                        result_str = result_str.concat('<p>').concat('SimpG: ').concat(document.getElementsByName('SimpG')[0].value).concat('</p>');
+                        result_str = result_str.concat('<p>').concat('Duke: ').concat(document.getElementsByName('Duke')[0].value).concat('</p><br>');
+                        
+                        swal({
+                            title: "Result",
+                            text: result_str,
+                            type: "success",
+                            html: true,
+                            confirmButtonText: 'Ok'
+                        },
+                        function(){
+                             $('#senddata').submit();
+                        }); 
+                    });
+
+                }); 
+            });
+			
+            function getRadioValue(radioq)
+			{
+			    var elements = document.getElementsByName(radioq);
+			    for (var i = 0, l = elements.length; i < l; i++)
+			    {
+			        if (elements[i].checked)
+			        {
+			            return elements[i].value;
+			        }
+			    }
+			}
+            
+			var tt=[];
+			for (var i=0; i<document.getElementsByName('tt').length-1; i++)
+				tt[i] = document.getElementsByName('tt')[i].value.replace(/!/gm,' ');
+			var nn=[];
+			for (var i=0; i<document.getElementsByName('nn').length-1; i++)
+				nn[i] = document.getElementsByName('nn')[i].value.replace(/!/gm,' ');
+			var mm=[];
+			for (var i=0; i<document.getElementsByName('mm').length-1; i++)
+				mm[i] = document.getElementsByName('mm')[i].value.replace(/!/gm,' ');
+			var ssg=[];
+			for (var i=0; i<document.getElementsByName('ssg').length-1; i++)
+				ssg[i] = document.getElementsByName('ssg')[i].value.replace(/!/gm,' ');
+			var ssimg=[];
+			for (var i=0; i<document.getElementsByName('ssimg').length-1; i++)
+				ssimg[i] = document.getElementsByName('ssimg')[i].value.replace(/!/gm,' ');
+			var am=[];
+			for (var i=0; i<document.getElementsByName('am').length; i++){
+				if (document.getElementsByName('am')[i].value>=0)
+					am.push(document.getElementsByName('am')[i].value);
+			}
+
+
+
+			function compute(){
+
+				var ans=[];
+				for (var i=0; i<am.length; i++){
+					if (am[i]>0){
+						ans[i] = document.getElementsByName('ans['.concat(i+1)+']')[0].value;
+						if (ans[i]==0)
+							ans[i]="";
+					}
+					else
+						ans[i] = getRadioValue('ans['.concat(i+1)+']');
+                    
+				}
+                
+				var tmodel='TX';
+				var nmodel='NX';
+				var mmodel='MX';
+				var num=0;
+
+				for (var i=1; i<tt.length; i++){					//	check T
+					var temp = tt[i].replace(/"/g,"").split(",");
+					var flag=1;
+					for (var j=0; j<temp.length-2; j++){
+						if (!(ans[j]==temp[j] || temp[j]=="ANY")){
+							flag=0;
+							break;
+						}
+					}
+					if (flag==1){
+						tmodel = temp[temp.length-2];
+						break;
+					}
+				}
+                
+				num += temp.length-2;
+				
+				
+				for (var i=1; i<nn.length; i++){					//	check N
+					var temp = nn[i].replace(/"/g,"").split(",");
+					var flag=1;
+					for (var j=0; j<temp.length-2; j++){
+						if (!(ans[j+num]==temp[j] || temp[j]=="ANY")){
+							flag=0;
+							break;
+						}
+					}
+					if (flag==1){
+						nmodel = temp[temp.length-2];
+						break;
+					}
+				}
+				num += temp.length-2;
+
+				for (var i=1; i<mm.length; i++){					//	check M
+					var temp = mm[i].replace(/"/g,"").split(",");
+					var flag=1;
+
+					for (var j=0; j<temp.length-2; j++){
+						if (!(ans[j+num]==temp[j] || temp[j]=="ANY")){
+							flag=0;
+							break;
+						}
+					}
+					if (flag==1){
+						mmodel = temp[temp.length-2];
+						break;
+					}
+				}
+                
+				var sg=[];
+				sg[0]="Need more information";
+				var duke=[];
+				duke[0]=" ";
+
+				for (var i=1, j=0; i<ssg.length; i++){					//	check SG
+					var temp = ssg[i].replace(/"/g,"").split(",");
+
+					if ((tmodel==temp[0] || temp[0]=="ANY" || tmodel=="TX") &&
+						(nmodel==temp[1] || temp[1]=="ANY" || nmodel=="NX") &&
+						(mmodel==temp[2] || temp[2]=="ANY" || mmodel=="MX")) {
+
+						if (temp.length==6){
+							if ((ans[ans.length-2]==temp[3] || temp[3]=="ANY") &&
+								(ans[ans.length-1]==temp[4] || temp[4]=="ANY"))
+
+								sg[j++] = temp[5];
+						}
+						else
+							sg[j++] = temp[3];
+						if (temp.length==5)
+							duke[j-1] = temp[4];
+					}
+				}
+                
+
+				sg.sort();
+
+				var simg=[];
+				simg[0] = "Need more information";
+
+				for (var i=1; i<ssimg.length; i++){					//	check SimpG
+					var temp = ssimg[i].replace(/"/g,"").split(",");
+
+					if (temp.length==3){
+						if ((sg[0]==temp[0]) && (mmodel==temp[1]))
+							simg[0] = temp[2];
+
+						if (sg.length>1){
+							if ((sg[sg.length-1]==temp[0]) && (mmodel==temp[1]))
+								simg[1] = temp[2];
+						}
+					}
+					else{
+						if (sg[0]==temp[0]) 
+							simg[0] = temp[1];
+
+						if (sg.length>1){
+							if (sg[sg.length-1]==temp[0])
+								simg[1] = temp[1];
+						}
+					}
+				}	
+
+
+				setTimeout('compute()',500);
+
+				if (getRadioValue('ay')=="T")
+					document.getElementsByName('TNM')[0].value = 'y';
+				else
+					document.getElementsByName('TNM')[0].value = ' ';
+				if (getRadioValue('tpc')=='T')
+					document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat('p');
+				else
+					document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat('c');
+				document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat(tmodel);
+
+				if (getRadioValue('npc')=='T')
+					document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat('p');
+				else
+					document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat('c');
+				document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat(nmodel);
+
+				if (getRadioValue('mpc')=='T')
+					document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat('p');
+				else
+					document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat('c');
+				document.getElementsByName('TNM')[0].value=document.getElementsByName('TNM')[0].value.concat(mmodel);
+
+				document.getElementsByName('SG')[0].value=sg[0];
+				document.getElementsByName('SGrange')[0].value=sg[0];
+				document.getElementsByName('SimpG')[0].value=simg[0];
+				document.getElementsByName('Duke')[0].value = duke[0];
+
+				if (sg[0]!=sg[sg.length-1])
+					document.getElementsByName('SGrange')[0].value=sg[0].concat('-').concat(sg[sg.length-1]);
+				if (simg[0]!=simg[1] && simg[1]!=undefined)
+					document.getElementsByName('SimpG')[0].value=simg[0].concat('-').concat(simg[1]);
+				if (duke[0]!=duke[duke.length-1] && duke[duke.length-1]!="")
+					document.getElementsByName('Duke')[0].value = duke[0].concat('-').concat(duke[duke.length-1]);
+                        
+                
+			}
+			compute();
+
+		</script>
+
+
+
+	</body>
+</html>
+

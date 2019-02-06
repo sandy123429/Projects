@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CanStaging-upload</title>
+    <% include ./partials/head %>
+</head>
+<style>
+    .file-footer-buttons .kv-file-upload {
+        visibility: hidden!important;
+    }
+    .modal-body {
+        height: 100px;
+        overflow-y: scroll!important;
+    }
+</style>
+
+<body>
+
+    <% include ./partials/header %>
+
+        <div class="container">
+            <div class="col-xs-offset-0 col-xs-12">
+                <div class="form-group">
+                    <h1 id='output'><%=__("Upload")%></h1>
+                    <label class="control-label"><%=__("This tool lets you upload files containing data to be staged in batch mode")%></label>
+                    <label class="control-label"><%=__("(maximum files: 10,&nbsptype: .csv)")%></label>
+                    <br><label class="control-label"><%=__("you can download the form in the website")%></label>
+                    <input id="input-1" name="input1[]" type="file" multiple class="file-loading">
+                    <div id="errorBlock" class="help-block" />
+                    
+                    <% include ./hidden %>                    
+                    
+                    <script type='text/javascript'> 
+                        var TNM=[], RSG=[], RSGrange=[], RSimpG=[], RDuke=[];
+                        var datac = 0;
+                        var result_str='';
+                        var Site=[];
+                        var ID = [];
+                        $("#input-1").fileinput({
+                            uploadUrl: '/file-upload-batch',
+                            uploadAsync: false,
+                            maxFileCount: 10,
+                            allowedFileExtensions: ["csv"],
+                            maxFilePreviewSize: 10240
+                        });
+                        
+                        $('#input-1').on('filebatchpreupload', function(event, data, previewId, index) {
+                            var form = data.form,
+                                files = data.files,
+                                extra = data.extra,
+                                response = data.response,
+                                reader = data.reader;
+                            
+                            for (var i = 0; i < data.filescount; i++) { //for multiple files          
+                                (function(file) {
+                                    var name = file.name;
+                                    var reader = new FileReader();                                    
+                                    reader.onload = function(e) {                                        
+                                        var text = e.target.result;
+                                        var data_json = csvJSON(text);                                                                              
+                                        compute(data_json); 
+                                        result_str = result_str.concat('<p>').concat('ID: ').concat(ID[datac-1]).concat('</p>');
+                                        result_str = result_str.concat('<p>').concat('filename: ').concat(name).concat('</p>'); 
+                                        result_str = result_str.concat('<p>').concat('TNM Result: ').concat(TNM[datac-1]).concat('</p>');
+                                        result_str = result_str.concat('<p>').concat('SG: ').concat(RSG[datac-1]).concat('</p>');
+                                        result_str = result_str.concat('<p>').concat('SGrange: ').concat(RSGrange[datac-1]).concat('</p>');
+                                        result_str = result_str.concat('<p>').concat('SimpG: ').concat(RSimpG[datac-1]).concat('</p>');
+                                        result_str = result_str.concat('<p>').concat('Duke: ').concat(RDuke[datac-1]).concat('</p><br>');
+                                    }
+                                    
+                                    reader.readAsText(file, "UTF-8");                                    
+                                })(files[i]);
+                            }
+                        });
+
+                        $('#input-1').on('filebatchuploadsuccess', function(event, data, previewId, index) {
+                            var form = data.form,
+                                files = data.files,
+                                extra = data.extra,
+                                response = data.response,
+                                reader = data.reader;  
+                                alert('success');                             
+                        });
+
+                        $('#input-1').on('filebatchuploadcomplete', function(event, files, extra) {                            
+                            batchstore();
+                        });
+
+                        function csvJSON(csv) {
+
+                            var lines = csv.split("\n");
+
+                            var obj = {};
+                            for (var i = 0; i < lines.length; i++) {                                
+                                var currentline = lines[i].replace(/(\r\n|\n|\r)/gm, "").split(",");
+                                obj[currentline[0]] = currentline[1];
+                            }
+
+                            return obj;
+                        }
+                        function batchstore(){
+                            $.ajax({
+                                url: '/store?name=<%=user %>',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                dataType: 'json',
+                                data: JSON.stringify({Num:datac, Site:Site, ID: ID, TNM: TNM, SG:RSG, SGrange:RSGrange, SimpG: RSimpG, Duke:RDuke})
+                            });
+                            /*
+                            bootbox.dialog({
+                                title: "your result",
+                                message: result_str,
+                                buttons:{
+                                    success: {
+                                        label: "OK",
+                                        className: "btn-success",
+                                        callback: function () {
+                                            window.location.href = '/main?name=<%=user %>';
+                                        }
+                                    }
+                                }
+                            
+                            });
+                            
+                            */
+                            
+                            sweetAlert({
+                                title: "Result",
+                                text: result_str,
+                                html: true,
+                                type: "success"
+                            },function () {
+                                window.location.href = '/main?name=<%=user %>';
+                            });
+                            
+                        }
+                        
+                        function compute(data_json){
+                            var count = Object.keys(data_json).length;  
+                            var j = 0;
+                            var tpc, npc, mpc, ay;
+                            var ans = [];
+                            var site = data_json["type"].toLowerCase();
+                            
+                            ID[datac] = data_json["ID"];
+                            
+                            for(var i=1; i<count-1; i++){
+                                if(Object.keys(data_json)[i]=="Information source of T is pathlogy"){
+                                    tpc = data_json[Object.keys(data_json)[i]];
+                                }else if(Object.keys(data_json)[i]=='Information source of N is pathlogy'){
+                                    npc = data_json[Object.keys(data_json)[i]];
+                                }else if(Object.keys(data_json)[i]=='Information source of M is pathlogy'){
+                                    mpc = data_json[Object.keys(data_json)[i]];
+                                }else if(Object.keys(data_json)[i]=='After adjuvant treatment'){
+                                    ay = data_json[Object.keys(data_json)[i]];
+                                }else{
+                                    ans[j] = data_json[Object.keys(data_json)[i]];
+                                    if (ans[j]=='0')
+                                        ans[j]='';
+                                    j++;
+                                }                                
+                            }
+                            var pre;
+                            if(site=='breast'){
+                                pre='b';
+                                Site[datac] = 1;
+                            }else if(site=='cervix'){
+                                pre = 'ce';
+                                Site[datac] = 2;
+                            }else if(site=='colorectal'){
+                                pre = 'co';
+                                Site[datac] = 3;
+                            }else if(site=='lung'){
+                                pre = 'l';
+                                Site[datac] = 4;
+                            }else if(site=='prostate'){
+                                pre = 'p';
+                                Site[datac] = 5;
+                            }
+                            
+                            var tt=[];
+                            for (var i=0; i<document.getElementsByName(pre.concat('tt')).length-1; i++)
+                                tt[i] = document.getElementsByName(pre.concat('tt'))[i].value.replace(/!/gm,' ');
+                            
+                            
+                            var nn=[];
+                            for (var i=0; i<document.getElementsByName(pre.concat('nn')).length-1; i++)
+                                nn[i] = document.getElementsByName(pre.concat('nn'))[i].value.replace(/!/gm,' ');
+                            var mm=[];
+                            for (var i=0; i<document.getElementsByName(pre.concat('mm')).length-1; i++)
+                                mm[i] = document.getElementsByName(pre.concat('mm'))[i].value.replace(/!/gm,' ');
+                            var ssg=[];
+                            for (var i=0; i<document.getElementsByName(pre.concat('ssg')).length-1; i++)
+                                ssg[i] = document.getElementsByName(pre.concat('ssg'))[i].value.replace(/!/gm,' ');
+                            var ssimg=[];
+                            for (var i=0; i<document.getElementsByName(pre.concat('ssimg')).length-1; i++)
+                                ssimg[i] = document.getElementsByName(pre.concat('ssimg'))[i].value.replace(/!/gm,' ');
+                           
+                            var tmodel='TX';
+                            var nmodel='NX';
+                            var mmodel='MX';
+                            var num=0;
+                          
+                            for (var i=1; i<tt.length; i++){					//	check T
+                                var temp = tt[i].replace(/"/g,"").split(",");
+                                var flag=1;
+                                for (var j=0; j<temp.length-2; j++){
+                                    if (!(ans[j]==temp[j] || temp[j]=="ANY")){
+                                        flag=0;
+                                        break;
+                                    }
+                                }
+                                if (flag==1){
+                                    tmodel = temp[temp.length-2];
+                                    break;
+                                }
+                            }
+                            
+                            num += temp.length-2;
+                        
+                        
+                            for (var i=1; i<nn.length; i++){					//	check N
+                                var temp = nn[i].replace(/"/g,"").split(",");
+                                var flag=1;
+                                for (var j=0; j<temp.length-2; j++){
+                                    if (!(ans[j+num]==temp[j] || temp[j]=="ANY")){
+                                        flag=0;
+                                        break;
+                                    }
+                                }
+                                if (flag==1){
+                                    nmodel = temp[temp.length-2];
+                                    break;
+                                }
+                            }
+                            num += temp.length-2;
+
+                            for (var i=1; i<mm.length; i++){					//	check M
+                                var temp = mm[i].replace(/"/g,"").split(",");
+                                var flag=1;
+
+                                for (var j=0; j<temp.length-2; j++){
+                                    if (!(ans[j+num]==temp[j] || temp[j]=="ANY")){
+                                        flag=0;
+                                        break;
+                                    }
+                                }
+                                if (flag==1){
+                                    mmodel = temp[temp.length-2];
+                                    break;
+                                }
+                            }
+
+                            var sg=[];
+                            sg[0]=" ";
+                            var duke=[];
+                            duke[0]=" ";
+
+                            for (var i=1, j=0; i<ssg.length; i++){					//	check SG
+                                var temp = ssg[i].replace(/"/g,"").split(",");
+
+                                if ((tmodel==temp[0] || temp[0]=="ANY" || tmodel=="TX") &&
+                                    (nmodel==temp[1] || temp[1]=="ANY" || nmodel=="NX") &&
+                                    (mmodel==temp[2] || temp[2]=="ANY" || mmodel=="MX")) {
+
+                                    if (temp.length==6){
+                                        if ((ans[ans.length-2]==temp[3] || temp[3]=="ANY") &&
+                                            (ans[ans.length-1]==temp[4] || temp[4]=="ANY"))
+
+                                            sg[j++] = temp[5];
+                                    }
+                                    else
+                                        sg[j++] = temp[3];
+                                    if (temp.length==5)
+                                        duke[j-1] = temp[4];
+                                }
+                            }
+
+                            sg.sort();
+
+                            var simg=[];
+                            simg[0] = " ";
+
+                            for (var i=1; i<ssimg.length; i++){					//	check SimpG
+                                var temp = ssimg[i].replace(/"/g,"").split(",");
+
+                                if (temp.length==3){
+                                    if ((sg[0]==temp[0]) && (mmodel==temp[1]))
+                                        simg[0] = temp[2];
+
+                                    if (sg.length>1){
+                                        if ((sg[sg.length-1]==temp[0]) && (mmodel==temp[1]))
+                                            simg[1] = temp[2];
+                                    }
+                                }
+                                else{
+                                    if (sg[0]==temp[0]) 
+                                        simg[0] = temp[1];
+
+                                    if (sg.length>1){
+                                        if (sg[sg.length-1]==temp[0])
+                                            simg[1] = temp[1];
+                                    }
+                                }
+                            }	
+                            
+                            if (ay=='T')
+                                TNM[datac] =  'y';
+                            else
+                                TNM[datac] = ' ';
+                               
+                            if (tpc=='T')
+                                TNM[datac] = TNM[datac].concat('p');
+                            else
+                                TNM[datac] = TNM[datac].concat('c');
+                                
+                            TNM[datac] = TNM[datac].concat(tmodel);
+
+                            if (npc=='T')
+                                TNM[datac] = TNM[datac].concat('p');
+                            else
+                                TNM[datac] = TNM[datac].concat('c');
+                            TNM[datac] = TNM[datac].concat(nmodel);
+
+                            if (mpc=='T')
+                                TNM[datac] = TNM[datac].concat('p');
+                            else
+                                TNM[datac] = TNM[datac].concat('c');
+                            TNM[datac] = TNM[datac].concat(mmodel);
+
+                            RSG[datac]=sg[0];
+                            RSGrange[datac]=sg[0];
+                            RSimpG[datac]=simg[0];
+                            RDuke[datac] = duke[0];
+
+                            if (sg[0]!=sg[sg.length-1])
+                                RSGrange[datac]=sg[0].concat('-').concat(sg[sg.length-1]);
+                            if (simg[0]!=simg[1] && simg[1]!=undefined)
+                                RSimpG[datac]=simg[0].concat('-').concat(simg[1]);
+                            if (duke[0]!=duke[duke.length-1] && duke[duke.length-1]!="")
+                                RDuke[datac] = duke[0].concat('-').concat(duke[duke.length-1]);
+                            
+                            datac++;                                            
+                        }
+                    </script>
+                </div>
+            </div>
+        </div>
+
+</body>
+
+</html>

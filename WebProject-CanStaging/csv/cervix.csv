@@ -1,0 +1,17 @@
+ID,-
+type,cervix
+After adjuvant treatment,T
+Information source of T is pathlogy,F
+Tumour invades beyond uterus,T
+Microscopic lesion only,T
+Stromal invasion,3
+Clinically visible lesion,2
+Parametrial involvement,F
+Carcinoma involves lower 1/3 of vagina,F
+Extension onto pelvic wall,T
+Hydronephrosis or non-functioning kidney,T
+Tumour invades mucosa of bladder or rectum,F
+Information source of N is pathlogy,T
+Number of positive nodes,1
+Information source of M is pathlogy,F
+Distant meastases,1

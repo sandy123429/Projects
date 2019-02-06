@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>CanStaging-breast</title>
+		<% include ./partials/head %>
+		<var id="wrong_info"><%= wrong_info %></var>
+	</head>
+
+	<body>
+		<% include ./partials/header %>
+
+		<div class="container">
+            <br><br><br><br>			
+			<div >		
+                <h2 class="col-xs-12 col-sm-offset-4 col-sm-4" > <%=__("My Account (type:")%><%= acctype%>) </h2>
+                <br><br>
+                <form class="form-horizontal" method="POST" enctype="application/json" action="http://nodejs-tnmproj.rhcloud.com/change_pwd?name=<%=user %>">
+                    <div class="form-group">
+                        <div class="col-xs-12 col-sm-offset-4 col-sm-4"> 
+                            <input type="password" class="form-control" name="oldpwd" placeholder="Enter old password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class=" col-xs-12 col-sm-offset-4 col-sm-4"> 
+                            <input type="password" class="form-control" name="newpwd" placeholder="Enter new password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12 col-sm-offset-4 col-sm-4"> 
+                            <input type="password" class="form-control" name="repeat_newpwd" placeholder="Reenter new password">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-xs-12 col-sm-offset-4 col-sm-4"> 
+                            <script>
+                                if (document.getElementById("wrong_info").innerHTML=="Incorrect information")
+                                    document.write("<p>Wrong information</p>");
+                                document.getElementById("wrong_info").innerHTML = null;
+                            </script>
+                        </div>
+                    </div>
+                    
+                    
+                    <br>
+                    <div class="form-group"> 
+                        <div class="col-xs-12 col-sm-offset-6 col-sm-4">
+                            <button type="submit" class="btn btn-default"><%=__("Change the password")%></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+		</div>
+	</body>
+</html>

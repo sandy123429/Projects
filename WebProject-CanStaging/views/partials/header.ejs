@@ -1,0 +1,46 @@
+<!-- views/partials/header.ejs -->
+
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span> 
+            </button>
+            <a class="navbar-brand" href="/main?name=<%=user %>" >CanStaging</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+            <ul class="nav navbar-nav navbar-left">
+                <% if(aType=='Technician'||aType=='admin') {%>
+                <li><a href="upload?name=<%=user %>"><%=__("Upload")%></a></li>
+                <li class="dropdown">
+                    <a class="dropdown-toggle " data-toggle="dropdown" href="#" ><%=__("Download Form")%>
+                    <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="width: 100%;min-width: auto!important;">
+                        <li><a href="/csv/breast.csv" download><%=__("Breast")%></a></li>
+                        <li><a href="/csv/cervix.csv" download><%=__("Cervix")%></a></li>
+                        <li><a href="/csv/colorectal.csv" download><%=__("Colorectal")%></a></li>
+                        <li><a href="/csv/lung.csv" download><%=__("Lung")%></a></li>
+                        <li><a href="/csv/prostate.csv" download><%=__("Prostate")%></a></li>
+                    </ul>
+                </li>
+                <%}%>
+                <li><a href="log?name=<%=user %>"><%=__("Log")%></a></li>
+                <% if(aType=='admin') {%>
+                    <li><a href="manage_user?name=<%=user %>"><%=__("Manage users")%></a></li>
+                <%}%>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle " data-toggle="dropdown" href="#" ><%=user %>
+                    <span class="caret"></span></a>
+                    <ul class="dropdown-menu" style="width: 100%;min-width: auto!important;">
+                        <li><a href="/myaccount?name=<%=user %>"><%=__("My Account")%></a></li>
+                        <li><a href="/logout?name=<%=user %>"><%=__("Log out")%></a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

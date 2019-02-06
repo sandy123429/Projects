@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>		
+		<title>CanStaging-login</title>
+        <% include ./partials/head %>
+        <script defer src="./l10n.js" charset="utf-8"></script>
+        <link href="lang.ini" rel="resource" type="application/l10n" />
+        <var id="wrong_info"><%= wrong_info %></var>
+        
+        
+  <link rel="prefetch" type="application/l10n" href="./node_modules/l10n/l10n/data.ini" />
+  <script type="text/javascript" src="./node_modules/l10n/l10n.js"></script>
+	</head>
+    <script>
+    function trans(lan){
+        var l10n = document.webL10n;
+        l10n.setLanguage(lan);
+        return true;
+    }
+    </script>
+	<body style="background:url(https://wallpapers.wallhaven.cc/wallpapers/full/wallhaven-322269.jpg) center">
+		<nav class="navbar navbar-default">
+			<div class="container">
+                <ul class="nav navbar-nav navbar-left">
+				<div class="navbar-header">
+				    <a class="navbar-brand">CanStaging</a>
+				</div>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <form class="navbar-form navbar-right" method="POST" enctype="application/json" action="http://nodejs-tnmproj.rhcloud.com/signin">
+                            <div class="form-group">
+                                <input data-l10n-id="email" type="email" name="username" class="form-control" placeholder="Enter email" required autofocus>
+                                <input data-l10n-id="password" type="password" name="password" class="form-control" placeholder="Enter password" required>
+                            </div>
+                            <button data-l10n-id="signin" type="submit" class="btn btn-default">Sign in</button>
+                        </form>
+                    </li>
+                    <li class="dropdown" >
+                        <a class="dropdown-toggle " data-toggle="dropdown" href="#" ><span class="glyphicon glyphicon-globe"></span>
+                        <span class="caret"></span></a>
+                        <ul class="dropdown-menu" style="width: 100%;min-width: auto!important;">
+                            <li><a href="#" onclick="return trans('en');">en</a></li>
+                            <li><a href="#" onclick="return trans('de');">de</a></li>
+                            <li><a href="#" onclick="return trans('zh');">zh</a></li>
+                        </ul>
+                    </li>
+                </ul>
+			</div>
+		</nav>
+
+
+		<div class="container">
+			
+			<div class="col-xs-12 col-sm-6">
+				<br><br><br><br><br><br><br>
+				<h1 data-l10n-id="welcome">Welcome to CanStaging</h1> 
+				<h3 data-l10n-id="title">We help you rapidly evaluate five different kinds of cancer using TNM model.</h3>
+			</div>
+
+			<div class="col-xs-12 col-sm-offset-2 col-sm-4">
+				<br><br><br><br><br><br><br>
+				<form class="form-horizontal" role="form" method="POST" enctype="application/json" action="http://nodejs-tnmproj.rhcloud.com/register">
+					
+                    <div class="form-group">
+						<div class="col-xs-12 col-sm-9">
+							<input data-l10n-id="email" type="email" class="form-control" name="user" placeholder="Enter email" required autofocus>
+							<script>
+								if (document.getElementById("wrong_info").innerHTML=="Existing account"){
+									document.write("<p>Existing account</p>");
+									document.getElementById("wrong_info").innerHTML = null;
+								}
+							</script>
+						</div>
+					</div>
+					
+					<div class="form-group" >
+						<div class="col-xs-12 col-sm-9"> 
+							<input data-l10n-id="password" type="password" class="form-control" name="password" placeholder="Enter password" required>
+						</div>
+					
+					</div>
+
+					<div class="form-group">
+						<div class="col-xs-12 col-sm-9"> 
+							<input data-l10n-id="cpassword" type="password" class="form-control" name="confirmedPassword" placeholder="Confirm password" required>
+                            <script>
+                                if (document.getElementById("wrong_info").innerHTML=="Incorrect password")
+                                    document.write("<p>Incorrect password</p>");
+                                document.getElementById("wrong_info").innerHTML = null;
+                            </script>
+                        </div>
+					</div>
+					<div class="form-group">
+						<div class="col-xs-6 col-sm-2">
+							<label class="radio-inline" active>
+								<input type="radio" name="accType" value="Clinician" checked>Clinician</input>
+							</label>
+						</div>
+						<div class="col-xs-6 col-sm-offset-2 col-sm-2">
+							<label class="radio-inline">
+								<input type="radio" name="accType" value="Technician" >Technician</input>
+							</label>
+						</div>
+					</div>
+
+					<div class="form-group"> 
+						<div class="col-xs-12 col-sm-offset-4 col-sm-1">
+							<button data-l10n-id="create" type="submit" class="btn btn-default" >Create an account</button>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+
+
+	</body>
+</html>
+

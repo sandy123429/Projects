@@ -1,0 +1,18 @@
+ID,-
+type,lung
+After adjuvant treatment,T
+Information source of T is pathlogy,F
+Enter size of invasive tumour,0
+Bronchial invasion,1
+Invades the visceral pleura,T
+Atelectasis or obstructive pneumonitis (Not entire lung),T
+Tumour invades any of the following: chest wall or rib; diaphragm; phrenic nerve; mediastinal pleura; parietal pericardium,F
+Separate tumour nodules in same lobe,T
+Atelectasis or obstructive pneumonitis of the entire lung,F
+Vocal cord paralysis,T
+Tumour invades any of the following mediastinum: heart or great vessels; recurrent laryngeal nerve; vertebral body; oesophagus,F
+Separate tumour nodule(s) in a different ipsilateral lobe,T
+Information source of N is pathlogy,T
+Reginal lymph nodes,1
+Information source of M is pathlogy,T
+Distant meastases,1

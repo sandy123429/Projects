@@ -1,0 +1,22 @@
+ID,-
+type,prostate
+After adjuvant treatment,T
+Information source of T is pathlogy,F
+Apearence,0
+Extension,1
+Throufh capsule,T
+Seminal vescicles,T
+Bladder neck (microscopic only),F
+Bladder,F
+External sphincter,T
+Rectum or levator muscles,T
+Pelvic wall,F
+Information source of N is pathlogy,F
+Number of positive nodes,1
+Information source of M is pathlogy,T
+Distant metastases,1
+Metastases to bone,T
+Metastases to non-regional nodes,F
+Metastases to other site,F
+SG (PSA value),T
+SG (Gleason score),T

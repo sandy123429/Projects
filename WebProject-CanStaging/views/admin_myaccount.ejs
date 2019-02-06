@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>CanStaging-log</title>
+        <% include ./partials/head %>
+    </head>
+	<body>
+		<% include ./partials/header %>
+
+		<div class="container">
+
+			<h3> <%=__("Hello")%> <%= user%> (admin) </h3>
+			<br><br>
+			<table class="table">
+				<thead>
+					<tr>
+						<th><%=__("Account")%></th>
+						<th><%=__("Type of account")%></th>
+						<th><%=__("Create time")%></th>
+						<th><%=__("Delete")%></th>
+						<th><%=__("Edit")%></th>
+					</tr>
+				</thead>
+				<tbody>
+                    <% for (var i = 0; i < log_data.length; i++) { %>
+                    <form class="form-horizontal" method="POST" enctype="application/json" action="http://nodejs-tnmproj.rhcloud.com/edit_acc?name=<%=user %>">
+                    <tr>
+                        <td><input readonly style="background-color:transparent; border:0px" name="acc" value=<%= log_data[i].account %>></td>
+                        <td><% if (log_data[i].acctype!="admin"){ %>
+							<select name="acctype">
+								<option value=<%= log_data[i].acctype %> ><%= log_data[i].acctype %></option>
+								<% if (log_data[i].acctype=="Clinician"){ %>
+									<option value="Technician">Technician</option>
+								<% } else {%>
+									<option value="Clinician">Clinician</option>
+								<% }%>
+							</select>
+						<%} else{ %>
+							<%= log_data[i].acctype %>
+						<% } %> 
+                        </td>
+                        <td><input style="background-color:transparent; border:0px" value=<%= log_data[i].time %>></td>
+                        
+                        <% if (log_data[i].account!="admin@admin") { %>
+                        	<td><input type="checkbox" name="del" value="T"></td>
+                        	<td><button type="submit" class="btn btn-default"><%=__("Ok")%></button></td>
+                        <% }%>
+
+                    </tr>    
+                    </form>
+                   <% } %>
+				</tbody>
+			</table>			
+		</div>
+	</body>
+</html>
+
