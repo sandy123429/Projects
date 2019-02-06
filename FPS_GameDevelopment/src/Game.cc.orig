@@ -1,0 +1,243 @@
+#include "Game.hh"
+
+#include <fstream>
+#include<chrono>
+#include<string>
+// glow BEFORE glfw (due to ogl conflicts)
+#include <glow/gl.hh>
+#include <GLFW/glfw3.h>
+#include<math.h>
+#include <common/assert.hh>
+#include <common/atb_translate.hh>
+
+#include <glow/common/log.hh>
+#include <glow/common/scoped_gl.hh>
+
+#include <aion/Action.hh>
+
+#include <rendering/Renderer.hh>
+#include <logic/Level.hh>
+#include <logic/GameObject.hh>
+#include <typeinfo>
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+
+using namespace glow;
+using namespace glow::camera;
+using namespace std::string_literals;
+Game* Game::sInstance = nullptr;
+
+Game::Game()
+{
+    gdassert(sInstance == nullptr, "Game can only be created once");
+    sInstance = this;
+
+    // do not load resources here but rather in Game::init()
+}
+
+void Game::loadLevel(const std::string& blendFileName)
+{
+    ACTION(); // measure time used by this function
+
+    // create new level
+    mLevel = std::make_shared<Level>(this);
+    // load level
+    mLevel->loadFromFile(blendFileName);
+	//setup character controller
+	mLevel->setupCharacterController();
+
+    // init level
+    mLevel->onInit();
+<<<<<<< HEAD
+=======
+	
+	//set the camera to position of cylinder as first person view
+	for (int i = 0; i < mLevel->getGameObjects().size; i++) {
+		if(mLevel->getGameObjects().at(i)->getName()=="Cylinder")
+			mCamera->setPosition(mLevel->getGameObjects().at(i)->getPosition());
+	}
+>>>>>>> cc0e62a750d93762cc7a9a4c24e0bf2eea7713bc
+
+    // notify renderer
+    mRenderer->onLevelLoaded(mLevel);
+}
+
+void Game::onInit(GLFWwindow* window, int argc, char** argv)
+{
+    ACTION(); // measure time used by this function
+
+    // assign window
+    gdassert(mWindow == nullptr, "Init was already called");
+    mWindow = window;
+
+    // assign window size
+    glfwGetWindowSize(window, &mWindowWidth, &mWindowHeight);
+
+    // create tweakbar
+    mTweakBar = TwNewBar("Game");
+    TwSetParam(mTweakBar, nullptr, "size", TW_PARAM_CSTRING, 1, "250 400");
+    TwSetParam(mTweakBar, nullptr, "refresh", TW_PARAM_CSTRING, 1, "0.5");
+    // create default camera
+    mCamera = std::make_shared<GenericCamera>();
+
+    // create default renderer
+    mRenderer = std::make_shared<Renderer>(this);
+    mRenderer->onInit();
+
+    // check if run in correct path
+    if (!std::ifstream("level/exporter.py").good())
+    {
+        std::cout << "Game must be run from 'bin/' folder" << std::endl;
+        std::cout << "(check the working directory)" << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // parse args
+    if (argc == 2) // one arg = level
+    {
+        loadLevel(argv[1]);
+    }
+    else
+    {
+        std::cout << "Usage: ~ LevelFile.blend" << std::endl;
+        exit(EXIT_SUCCESS);
+    }
+}
+
+void Game::onTick(float elapsedSeconds)
+{
+    ACTION(); // measure time used by this function
+
+    // key press 
+	std::string keyPressed;
+	if (mKeyA) 
+		keyPressed = "A";	
+	if (mKeyD)
+		keyPressed = "D";	
+	if (mKeyW) 
+		keyPressed = "W";	
+	if (mKeyS) 
+		keyPressed = "S";	
+	if (mKeySpace) 
+		keyPressed = "Space";
+	
+    // Step 1: Update the game
+	if (mLevel) {
+		mLevel->update(elapsedSeconds);
+		mLevel->physicUpdate(elapsedSeconds, keyPressed);
+	}
+
+	// Step 2: update the camera
+	auto m_trans = mLevel->getGhostObject()->getWorldTransform();
+	mCamera->setPosition(glm::vec3(m_trans.getOrigin().getX(), m_trans.getOrigin().getY(), m_trans.getOrigin().getZ()));
+	glm::quat rot = glm::quat(m_trans.getRotation().getW(), m_trans.getRotation().getX(), m_trans.getRotation().getY(), m_trans.getRotation().getZ());
+	mCamera->setRotationMatrix(glm::toMat4(rot));
+    
+	// Step 3: Render the game
+    mRenderer->render(elapsedSeconds);
+
+}
+
+void Game::onResize(int w, int h)
+{
+    mWindowWidth = w;
+    mWindowHeight = h;
+
+    // resize camera viewport
+    mCamera->resize(w, h);
+
+    // resize renderer (targets etc.)
+    mRenderer->onResize(w, h);
+}
+
+void Game::onKeyPress(int key, int scancode, int action, int modifiers)
+{
+    // AntTweakBar input handling
+    if (action == GLFW_PRESS && TwKeyPressed(glfw2atbKey(key, scancode), glfw2atbKeyMod(modifiers)))
+        return;
+    if (action == GLFW_RELEASE && TwKeyTest(glfw2atbKey(key, scancode), glfw2atbKeyMod(modifiers)))
+        return;
+
+    // key pressed down
+    if (action == GLFW_PRESS)
+    {
+        // ESC
+        if (key == GLFW_KEY_ESCAPE)
+        {
+            // close window next frame
+            glfwSetWindowShouldClose(mWindow, GLFW_TRUE);
+        }
+    }
+
+    if (action != GLFW_REPEAT)
+    {
+        // WASD
+		
+        if (key == GLFW_KEY_W)
+            mKeyW = action == GLFW_PRESS;
+        if (key == GLFW_KEY_A)
+            mKeyA = action == GLFW_PRESS;
+        if (key == GLFW_KEY_S)
+            mKeyS = action == GLFW_PRESS;
+        if (key == GLFW_KEY_D)
+            mKeyD = action == GLFW_PRESS;
+		if(key == GLFW_KEY_SPACE)
+			mKeySpace = action == GLFW_PRESS;
+		
+    }
+}
+
+void Game::onCharInput(uint32_t codepoint)
+{
+    // AntTweakBar input handling
+    if (TwKeyTest(codepoint, TW_KMOD_NONE))
+        return;
+}
+
+void Game::onMousePress(int button, int action, int modifiers)
+{
+    // AntTweakBar input handling
+    if (TwMouseButton(glfw2atbMouseAction(action), glfw2atbMouseButton(button)))
+        return;
+
+    // update mouse input
+    if (button == GLFW_MOUSE_BUTTON_RIGHT)
+        mMouseRight = action == GLFW_PRESS;
+}
+
+void Game::onMouseMove(double x, double y)
+{
+	// AntTweakBar input handling
+	if (TwMouseMotion(x, y))
+		return;
+
+	// update last mouse pos
+	if (mMouseLastX == -1)
+	{
+		mMouseLastX = x;
+		mMouseLastY = y;
+		return; // no delta data yet
+	}
+
+	// calc mouse movement
+	auto dx = x - mMouseLastX;
+	auto dy = y - mMouseLastY;
+	mMouseLastX = x;
+	mMouseLastY = y;
+
+	// look-around
+	if (mMouseRight)
+	{
+		mCamera->FPSstyleLookAround(dx / mWindowWidth, dy / mWindowHeight);
+		std::cout << "move" << std::endl;
+	}
+        
+}
+
+void Game::onMouseWheel(double xoffset, double yoffset)
+{
+    // AntTweakBar input handling
+    if (TwMouseWheel(yoffset))
+        return;
+}
